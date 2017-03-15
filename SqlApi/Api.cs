@@ -12,6 +12,8 @@
     {
         string filedir = @"..\..\..\sql";
 
+        string cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
+
         List<SqlFile> sqlFiles;
 
         public List<SqlFile> SqlFiles => sqlFiles ?? (sqlFiles = GetSqlFiles());
@@ -39,8 +41,6 @@
         {
             var query = SqlFiles.FirstOrDefault(c => c.Id == id);
             if (query == null) return null;
-
-            var cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
 
             using (var cnn = new SqlConnection(cnnStr))
             {
