@@ -47,7 +47,7 @@
             }
         }
 
-        public void Execute(int id, object paramList)
+        public void Execute(int id, IDictionary<string,object> paramList)
         {
             var query = SqlFiles.FirstOrDefault(c => c.Id == id);
             if (query == null) return;
@@ -57,29 +57,6 @@
             using (var cnn = new SqlConnection(cnnStr))
             {
                 var res = cnn.Query(query.SqlText, paramList);
-                foreach (var row in res)
-                {
-                    Console.WriteLine(string.Join(",", row));
-                }
-            }
-        }
-
-        public void Execute(int id, string[] paramList)
-        {
-            var query = SqlFiles.FirstOrDefault(c => c.Id == id);
-            if (query == null) return;
-
-            var cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
-
-            using (var cnn = new SqlConnection(cnnStr))
-            {
-                var sqlText = query.SqlText;
-                foreach (var p in paramList.Select((v, i) => new { v, i }))
-                {
-                    sqlText = sqlText.Replace($"@p{p.i + 1}", $"'{p.v}'");
-                }
-
-                var res = cnn.Query(sqlText);
                 foreach (var row in res)
                 {
                     Console.WriteLine(string.Join(",", row));

@@ -4,7 +4,6 @@
     using SqlApi;
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.Linq;
 
     [TestClass()]
@@ -19,19 +18,12 @@
 
             api.Execute(1);
 
-            //api.Execute(4, new { p1 = 3, p2 = "test3" });
-
-            //api.Execute(4, new[] { "3", "test4" });
-
-
-
-            IDictionary<string, object> eo = new ExpandoObject();
-
-            eo["p1"] = "3";
-            eo["p2"] = "test3";
-
+            var eo = new Dictionary<string, object>
+            {
+                ["p1"] = "3",
+                ["p2"] = "test3"
+            };
             api.Execute(4, eo);
-
 
             Console.WriteLine();
 
