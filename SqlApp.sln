@@ -9,6 +9,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlApi", "SqlApi\SqlApi.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlApiTests", "SqlApiTests\SqlApiTests.csproj", "{52C10FFF-C36C-4DA4-8B24-231A5007CFDB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06A86F45-9C6A-4F80-85B1-D1405A997899}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{F7B1B161-ADE3-4969-98E1-CA46E987C436}"
+	ProjectSection(SolutionItems) = preProject
+		sql\1.cmd = sql\1.cmd
+		sql\1.selectall.sql = sql\1.selectall.sql
+		sql\2.cmd = sql\2.cmd
+		sql\2.insert.sql = sql\2.insert.sql
+		sql\3.cmd = sql\3.cmd
+		sql\3.select.sql = sql\3.select.sql
+		sql\4.cmd = sql\4.cmd
+		sql\4.update.sql = sql\4.update.sql
+		sql\5.cmd = sql\5.cmd
+		sql\5.delete.sql = sql\5.delete.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +46,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F7B1B161-ADE3-4969-98E1-CA46E987C436} = {06A86F45-9C6A-4F80-85B1-D1405A997899}
 	EndGlobalSection
 EndGlobal

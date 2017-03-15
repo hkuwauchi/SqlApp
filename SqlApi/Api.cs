@@ -10,7 +10,7 @@
 
     public class Api
     {
-        string filedir = @"C:\Users\hisa\Desktop\sql";
+        string filedir = @"..\..\..\sql";
 
         List<SqlFile> sqlFiles;
 
