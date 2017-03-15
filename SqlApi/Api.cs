@@ -5,9 +5,8 @@
     using System.Data.SqlClient;
     using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Dapper;
+    using System.Dynamic;
 
     public class Api
     {
@@ -29,39 +28,51 @@
             return null;
         }
 
-        public void Execute(int id)
+        public IEnumerable<ExpandoObject> Execute(int id)
         {
             var query = SqlFiles.FirstOrDefault(c => c.Id == id);
-            if (query == null) return;
+            if (query == null) return null;
 
             var cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
 
             using (var cnn = new SqlConnection(cnnStr))
             {
-
-                var res = cnn.Query(query.SqlText);
-                foreach (var row in res)
-                {
-                    Console.WriteLine(string.Join(",", row));
-                }
+                return cnn.Query(query.SqlText).Select(c => (ExpandoObject)ToExpandoDynamic(c));
             }
         }
 
-        public void Execute(int id, IDictionary<string,object> paramList)
+        public List<string> GetParamList(int id)
         {
             var query = SqlFiles.FirstOrDefault(c => c.Id == id);
-            if (query == null) return;
+            if (query == null) return null;
+            return query.ParamList;
+        }
+
+        public IEnumerable<ExpandoObject> Execute(int id, IDictionary<string,object> paramList)
+        {
+            var query = SqlFiles.FirstOrDefault(c => c.Id == id);
+            if (query == null) return null;
 
             var cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
 
             using (var cnn = new SqlConnection(cnnStr))
             {
-                var res = cnn.Query(query.SqlText, paramList);
-                foreach (var row in res)
-                {
-                    Console.WriteLine(string.Join(",", row));
-                }
+                return cnn.Query(query.SqlText, paramList).Select(c=> (ExpandoObject)ToExpandoDynamic(c));
             }
+        }
+
+        private static dynamic ToExpandoDynamic(object value)
+        {
+            var dapperRowProperties = value as IDictionary<string, object>;
+
+            IDictionary<string, object> expando = new ExpandoObject();
+
+            foreach (KeyValuePair<string, object> property in dapperRowProperties)
+            {
+                expando.Add(property.Key, property.Value);
+            }
+
+            return expando as ExpandoObject;
         }
     }
 }
