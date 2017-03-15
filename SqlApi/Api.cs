@@ -28,19 +28,6 @@
             return null;
         }
 
-        public IEnumerable<ExpandoObject> Execute(int id)
-        {
-            var query = SqlFiles.FirstOrDefault(c => c.Id == id);
-            if (query == null) return null;
-
-            var cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
-
-            using (var cnn = new SqlConnection(cnnStr))
-            {
-                return cnn.Query(query.SqlText).Select(c => (ExpandoObject)ToExpandoDynamic(c));
-            }
-        }
-
         public List<string> GetParamList(int id)
         {
             var query = SqlFiles.FirstOrDefault(c => c.Id == id);
@@ -48,7 +35,7 @@
             return query.ParamList;
         }
 
-        public IEnumerable<ExpandoObject> Execute(int id, IDictionary<string,object> paramList)
+        public IEnumerable<ExpandoObject> Execute(int id, IDictionary<string, object> paramList = null)
         {
             var query = SqlFiles.FirstOrDefault(c => c.Id == id);
             if (query == null) return null;
@@ -57,7 +44,7 @@
 
             using (var cnn = new SqlConnection(cnnStr))
             {
-                return cnn.Query(query.SqlText, paramList).Select(c=> (ExpandoObject)ToExpandoDynamic(c));
+                return cnn.Query(query.SqlText, paramList).Select(c => (ExpandoObject)ToExpandoDynamic(c));
             }
         }
 
