@@ -20,7 +20,6 @@
         public ReadOnlyReactiveCollection<string> InfoMessages;
 
         public HashSet<string> DirPathSet { get; set; } = new HashSet<string>();
-        //public HashSet<Sql> SqlSet { get; private set; } = new HashSet<Sql>(AnonymousComparer.Create<Sql>((x, y) => x.Id == y.Id, obj => obj.Id.GetHashCode()));
         public Dictionary<int, Sql> SqlDic { get; private set; } = new Dictionary<int, Sql>();
 
         public Api()
