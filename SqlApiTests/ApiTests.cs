@@ -13,71 +13,74 @@
         public void SqlFilesTest()
         {
             var api = new Api();
-            api.SqlFiles.Count.Is(5);
-            api.SqlFiles.ForEach(c => Console.WriteLine(
+            api.SqlDic.Count.Is(4);
+            foreach (var c in api.SqlDic.OrderBy(c => c.Key))
+            {
+                Console.WriteLine(
                 string.Join(Environment.NewLine,
                 $"-----------------------",
-                c.Id,
-                c.FileName,
-                string.Join(",", c.ParamList.Select(p => p)),
-                c.SqlText)
-                ));
+                $"Id:{c.Value.Id}",
+                $"FileName:{c.Value.SqlFile.FileName}",
+                $"ParamNames:{(c.Value.ParamNames != null ? string.Join(",", c.Value.ParamNames) : "null")}",
+                "QueryText:",
+                c.Value.QueryText));
+            }
         }
 
         [TestMethod()]
         public void GetParamListTest()
         {
             var api = new Api();
-            var pl = api.GetParamList(1);
+            var pl = api.GetParamNames(1);
             pl.Count.Is(0);
 
-            pl = api.GetParamList(2);
+            pl = api.GetParamNames(2);
             pl.Count.Is(2);
             pl[0].Is("id");
             pl[1].Is("name");
         }
 
-        [TestMethod()]
-        public void ExecuteTest()
-        {
-            var api = new Api();
+        //[TestMethod()]
+        //public void ExecuteTest()
+        //{
+        //    var api = new Api();
 
-            var res = api.Execute(1);
+        //    var res = api.Execute(1);
 
-            Console.WriteLine("-----------------------");
-            foreach (var row in res)
-            {
-                Console.WriteLine(string.Join(",", row));
-            }
+        //    Console.WriteLine("-----------------------");
+        //    foreach (var row in res)
+        //    {
+        //        Console.WriteLine(string.Join(",", row));
+        //    }
 
-            var pl = api.GetParamList(3);
-            var pin = new[] { "3" };
+        //    var pl = api.GetParamNames(3);
+        //    var pin = new[] { "3" };
 
-            var paramList = pl.Select(c => c).Zip(pin, (p, v) => new { p, v }).ToDictionary(d => d.p, d => (object)d.v);
+        //    var paramList = pl.Select(c => c).Zip(pin, (p, v) => new { p, v }).ToDictionary(d => d.p, d => (object)d.v);
 
-            res = api.Execute(3, paramList);
+        //    res = api.Execute(3, paramList);
 
 
-            Console.WriteLine("-----------------------");
+        //    Console.WriteLine("-----------------------");
 
-            pl = api.GetParamList(4);
-            var num = int.Parse(((IDictionary<string, object>)res.First())["name"].ToString().Replace("test", ""));
+        //    pl = api.GetParamNames(4);
+        //    var num = int.Parse(((IDictionary<string, object>)res.First())["name"].ToString().Replace("test", ""));
 
-            pin = new[] { "3", $"test{(num == 3 ? 4 : 3)}" };
+        //    pin = new[] { "3", $"test{(num == 3 ? 4 : 3)}" };
 
-            paramList = pl.Select(c => c).Zip(pin, (p, v) => new { p, v }).ToDictionary(d => d.p, d => (object)d.v);
+        //    paramList = pl.Select(c => c).Zip(pin, (p, v) => new { p, v }).ToDictionary(d => d.p, d => (object)d.v);
 
-            res = api.Execute(4, paramList);
+        //    res = api.Execute(4, paramList);
 
-            res = api.Execute(1);
+        //    res = api.Execute(1);
 
-            Console.WriteLine("-----------------------");
-            foreach (var row in res)
-            {
-                Console.WriteLine(string.Join(",", row));
-            }
+        //    Console.WriteLine("-----------------------");
+        //    foreach (var row in res)
+        //    {
+        //        Console.WriteLine(string.Join(",", row));
+        //    }
 
-        }
+        //}
 
     }
 }
