@@ -31,10 +31,10 @@
         public void GetParamListTest()
         {
             var api = new Api();
-            var pl = api.GetParamNames(1);
+            var pl = api.GetParamNames(0);
             pl.Count.Is(0);
 
-            pl = api.GetParamNames(2);
+            pl = api.GetParamNames(4);
             pl.Count.Is(2);
             pl[0].Is("id");
             pl[1].Is("name");

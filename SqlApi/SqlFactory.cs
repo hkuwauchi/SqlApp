@@ -1,131 +1,40 @@
 ﻿namespace SqlApi
 {
+    using LibGit2Sharp;
+    using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
 
     public class SqlFactory
     {
         public static IEnumerable<Sql> CreateDefaultSqlSet()
         {
-            return new List<Sql>()
+            var repoPath = "SqlFiles";
+
+            if (!Directory.Exists(repoPath))
             {
-                new Sql()
+                Repository.Clone(
+                    @"D:\work\repo\SqlFiles",
+                    repoPath
+                    );
+            }
+            using (var repo = new Repository(repoPath))
+            {
+                var po = new PullOptions()
                 {
-                    SqlFile = new SqlFile()
-                    {
-                        FileName = "1.drop",
-                        RawText = @"
---sql
-IF OBJECT_ID('[Test].[dbo].[User]') IS NULL
-    BEGIN
-        GOTO Skip
-    END
-ELSE
+                    FetchOptions = new FetchOptions() { }
+                };
 
-BEGIN TRY
-    BEGIN TRANSACTION
-        DROP TABLE [Test].[dbo].[User]
-    COMMIT TRANSACTION
-END TRY
+                var signature = new Signature("hkuwauchi", "hkuwauchi@gmail.com", new DateTimeOffset(DateTime.Now));
 
-BEGIN CATCH
-    ROLLBACK TRANSACTION
-    PRINT ERROR_MESSAGE()
-    PRINT 'ROLLBACK TRANSACTION'
-END CATCH
+                Commands.Pull(repo, signature, po);
+            }
 
-Skip:
-"
-                    }
-                },
-                new Sql()
-                {
-                    SqlFile = new SqlFile()
-                    {
-                        FileName = "2.create",
-                        RawText = @"
---sql
-IF OBJECT_ID('[Test].[dbo].[User]') IS NOT NULL
-    BEGIN
-        GOTO Skip
-    END
-ELSE
-
-CREATE TABLE [Test].[dbo].[User](
-    [Id] [int] NOT NULL,
-    [Name] [varchar](10) NULL,
-    [Note] [text] NULL,
-    CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
-(
-    [Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-Skip:
-"
-                    }
-                },
-                new Sql()
-                {
-                    SqlFile = new SqlFile()
-                    {
-                        FileName = "3.drop_param",
-                        RawText = @"
---param
-declare @table varchar(10)
-set @table = 'User'
---sql
-exec(
-  'IF OBJECT_ID(''[Test].[dbo].[' + @table + ']'') IS NULL '
-+ '    BEGIN '
-+ '        GOTO Skip '
-+ '    END '
-+ 'ELSE '
-+ 'BEGIN TRY '
-+ '    BEGIN TRANSACTION '
-+ '        DROP TABLE [Test].[dbo].[User] '
-+ '    COMMIT TRANSACTION '
-+ 'END TRY '
-+ 'BEGIN CATCH '
-+ '    ROLLBACK TRANSACTION '
-+ '    PRINT ERROR_MESSAGE() '
-+ '    PRINT ''ROLLBACK TRANSACTION'' '
-+ 'END CATCH '
-+ 'Skip: '
-)
-"
-                    }
-                },
-                new Sql()
-                {
-                    SqlFile = new SqlFile()
-                    {
-                        FileName = "4.create_param",
-                        RawText = @"
---param
-declare @table varchar(10)
-set @table = 'User'
---sql
-exec(
-  'IF OBJECT_ID(''[Test].[dbo].[' + @table + ']'') IS NOT NULL '
-+ '    BEGIN '
-+ '        GOTO Skip '
-+ '    END '
-+ 'ELSE '
-+ 'CREATE TABLE [Test].[dbo].[' + @table + ']( '
-+ '    [Id] [int] NOT NULL, '
-+ '    [Name] [varchar](10) NULL, '
-+ '    [Note] [text] NULL, '
-+ '    CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED  '
-+ '( '
-+ '    [Id] ASC '
-+ ')WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY] '
-+ ') ON [PRIMARY] TEXTIMAGE_ON [PRIMARY] '
-+ 'Skip: '
-)
-"
-                    }
-                }
-            };
+            return Directory
+                    .EnumerateFiles(repoPath, "*.sql", SearchOption.AllDirectories)
+                    .Select(c => new Sql(c))
+                    .ToList();
         }
     }
 }
