@@ -28,6 +28,7 @@
             try
             {
                 SqlFile = new SqlFile(path);
+                ParamNames = GetParamNames(SqlFile.Lines);
             }
             catch (Exception e)
             {
@@ -53,9 +54,14 @@
                 var s = lines.IndexOf(lines.First(c => c.ToLower().StartsWith("--param"))) + 1;
                 var e = lines.IndexOf(lines.First(c => c.ToLower().StartsWith("--sql")));
 
-                var num = (e - s) / 2;
+                var num = (e - s);
 
-                return Enumerable.Range(0, num).Select(i => GetParamName(lines[s + i * 2])).ToList();
+                return Enumerable
+                    .Range(0, num)
+                    .Select(i => lines[s + i])
+                    .Where(c => c.ToLower().StartsWith("declare"))
+                    .Select(c => GetParamName(c))
+                    .ToList();
             }
             catch (Exception e)
             {

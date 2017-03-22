@@ -13,7 +13,7 @@
         public void SqlFilesTest()
         {
             var api = new Api();
-            api.SqlDic.Count.Is(4);
+            api.SqlDic.Count.Is(6);
             foreach (var c in api.SqlDic.OrderBy(c => c.Key))
             {
                 Console.WriteLine(
@@ -32,9 +32,18 @@
         {
             var api = new Api();
             var pl = api.GetParamNames(0);
-            pl.Count.Is(0);
+            pl.IsNull();
 
-            pl = api.GetParamNames(4);
+            pl = api.GetParamNames(1);
+            pl.Count.Is(2);
+            pl[0].Is("table");
+            pl[1].Is("statements");
+
+            pl = api.GetParamNames(2);
+            pl.Count.Is(1);
+            pl[0].Is("id");
+
+            pl = api.GetParamNames(6);
             pl.Count.Is(2);
             pl[0].Is("id");
             pl[1].Is("name");
