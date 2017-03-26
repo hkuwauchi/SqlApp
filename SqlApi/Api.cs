@@ -110,7 +110,7 @@
             return args.Select(a => names.Zip(a, (n, v) => new { n, v }).ToDictionary(d => d.n, d => (object)d.v)).ToList();
         }
 
-        public IEnumerable<ExpandoObject> Query(int id, params string[] args)
+        public IEnumerable<IDictionary<string, object>> Query(int id, params string[] args)
         {
             if (!SqlDic.ContainsKey(id)) return null;
             var sql = SqlDic[id];

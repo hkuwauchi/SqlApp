@@ -1,0 +1,26 @@
+###
+Get http://localhost:5050/api/List/
+
+###
+Get http://localhost:5050/api/List/1
+
+###
+Get http://localhost:5050/api/Query/4
+Content-Type: application/json
+
+[
+    [
+        1
+    ]
+]
+
+###
+Get http://localhost:5050/api/Query/7
+Content-Type: application/json
+
+[
+    [
+        1,2
+    ]
+]
+

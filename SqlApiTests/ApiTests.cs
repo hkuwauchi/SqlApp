@@ -4,16 +4,79 @@
     using SqlApi;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
 
     [TestClass()]
     public class ApiTests
     {
+        string create = @"
+IF OBJECT_ID('[Test].[dbo].[User]') IS NOT NULL
+    BEGIN
+        GOTO Skip
+    END
+ELSE
+CREATE TABLE[Test].[dbo].[User]
+        (
+
+[Id][int] NOT NULL,
+
+[Name] [varchar] (10) NULL, 
+    [Note] [text] NULL, 
+    CONSTRAINT[PK_User] PRIMARY KEY CLUSTERED
+(
+   [Id] ASC
+)WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY] 
+) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]
+Skip: 
+";
+        string drop = @"
+IF OBJECT_ID('[Test].[dbo].[User]') IS NULL
+    BEGIN
+        GOTO Skip
+    END
+ELSE
+BEGIN TRY
+    BEGIN TRANSACTION
+        DROP TABLE  [Test].[dbo].[User]
+    COMMIT TRANSACTION
+END TRY
+
+BEGIN CATCH
+    ROLLBACK TRANSACTION
+    PRINT ERROR_MESSAGE()
+    PRINT 'ROLLBACK TRANSACTION'
+END CATCH
+Skip: 
+";
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            Trace.WriteLine("TestInitialize");
+
+            var api = new Api();
+
+            var pin = new[] { drop };
+            api.Query(1, pin);
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Trace.WriteLine("TestCleanup");
+
+            var api = new Api();
+
+            var pin = new[] { drop };
+            api.Query(1, pin);
+        }
+
         [TestMethod()]
         public void SqlFilesTest()
         {
             var api = new Api();
-            api.SqlDic.Count.Is(6);
+            api.SqlDic.Count.Is(8);
             foreach (var c in api.SqlDic.OrderBy(c => c.Key))
             {
                 Console.WriteLine(
@@ -28,16 +91,15 @@
         }
 
         [TestMethod()]
-        public void GetParamListTest()
+        public void GetParamNamesTest()
         {
             var api = new Api();
             var pl = api.GetParamNames(0);
             pl.IsNull();
 
             pl = api.GetParamNames(1);
-            pl.Count.Is(2);
-            pl[0].Is("table");
-            pl[1].Is("statements");
+            pl.Count.Is(1);
+            pl[0].Is("statements");
 
             pl = api.GetParamNames(2);
             pl.Count.Is(1);
@@ -49,47 +111,100 @@
             pl[1].Is("name");
         }
 
-        //[TestMethod()]
-        //public void ExecuteTest()
-        //{
-        //    var api = new Api();
+        [TestMethod()]
+        public void QueryTest()
+        {
+            var api = new Api();
 
-        //    var res = api.Execute(1);
+            var pin = new[] { create };
+            var res = api.Query(1, pin);
+            res.IsNotNull();
+            res.Count().Is(0);
 
-        //    Console.WriteLine("-----------------------");
-        //    foreach (var row in res)
-        //    {
-        //        Console.WriteLine(string.Join(",", row));
-        //    }
+            pin = new[] { "1", "Name1" };
+            res = api.Query(6, pin);
+            res.IsNotNull();
+            res.Count().Is(0);
 
-        //    var pl = api.GetParamNames(3);
-        //    var pin = new[] { "3" };
+            res = api.Query(5);
+            res.IsNotNull();
+            res.Count().Is(1);
+            var row = res.First();
+            row["Id"].Is(1);
+            row["Name"].Is("Name1");
 
-        //    var paramList = pl.Select(c => c).Zip(pin, (p, v) => new { p, v }).ToDictionary(d => d.p, d => (object)d.v);
+            pin = new[] { "2", "Name2" };
+            res = api.Query(6, pin);
+            res.IsNotNull();
+            res.Count().Is(0);
 
-        //    res = api.Execute(3, paramList);
+            res = api.Query(5);
+            res.IsNotNull();
+            res.Count().Is(2);
+            row = res.Skip(1).First();
+            row["Id"].Is(2);
+            row["Name"].Is("Name2");
 
+            pin = new string[] { "1", "2" };
+            res = api.Query(7, pin);
+            res.IsNotNull();
+            res.Count().Is(2);
+            row = res.First();
+            row["i"].Is(1);
 
-        //    Console.WriteLine("-----------------------");
+            res = api.Query(8);
+            res.IsNotNull();
+            res.Count().Is(2);
+            row = res.First();
+            row["i"].Is(1);
 
-        //    pl = api.GetParamNames(4);
-        //    var num = int.Parse(((IDictionary<string, object>)res.First())["name"].ToString().Replace("test", ""));
+            row = res.Skip(1).First();
+            row["i"].Is(2);
 
-        //    pin = new[] { "3", $"test{(num == 3 ? 4 : 3)}" };
+            pin = new[] { drop };
+            res = api.Query(1, pin);
+            res.IsNotNull();
+            res.Count().Is(0);
+        }
 
-        //    paramList = pl.Select(c => c).Zip(pin, (p, v) => new { p, v }).ToDictionary(d => d.p, d => (object)d.v);
+        [TestMethod()]
+        public void ExecuteTest()
+        {
+            var api = new Api();
 
-        //    res = api.Execute(4, paramList);
+            var pin = new[] { create };
+            var res = api.Query(1, pin);
+            res.IsNotNull();
+            res.Count().Is(0);
 
-        //    res = api.Execute(1);
+            var pins = new List<string[]>()
+            {
+                new[] { "1", "Name1" },
+                new[] { "2", "Name2" },
+            };
 
-        //    Console.WriteLine("-----------------------");
-        //    foreach (var row in res)
-        //    {
-        //        Console.WriteLine(string.Join(",", row));
-        //    }
+            var cnt = api.Execute(6, pins);
+            cnt.IsNotNull();
+            cnt.Is(2);
 
-        //}
+            res = api.Query(5);
+            res.IsNotNull();
+            res.Count().Is(2);
+            var row = res.First();
+            row["Id"].Is(1);
+            row["Name"].Is("Name1");
 
+            row = res.Skip(1).First();
+            row["Id"].Is(2);
+            row["Name"].Is("Name2");
+
+            pin = new string[] { "1" };
+            res = api.Query(4, pin);
+            res.IsNotNull();
+            res.Count().Is(1);
+            row = res.First();
+            row["Id"].Is(1);
+            row["Name"].Is("Name1");
+        }
     }
 }

@@ -17,7 +17,7 @@
             {
                 DirectoryHelper.DeleteDirectory(repoPath);
             }
-            SqlFactory.CreateDefaultSqlSet().Count().Is(6);
+            SqlFactory.CreateDefaultSqlSet().Count().Is(8);
         }
     }
 }
