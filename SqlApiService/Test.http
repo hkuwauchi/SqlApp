@@ -1,0 +1,16 @@
+###
+Get http://localhost:5050/api/Sql/List
+
+###
+Get http://localhost:5050/api/Sql/GetParamNames?id=7
+
+###
+Post http://localhost:5050/api/Sql/Query
+Content-Type: application/application/x-www-form-urlencoded
+
+id=7&values=1&values=2
+
+###
+Post http://localhost:5050/api/Sql/ListApi
+
+
