@@ -13,7 +13,6 @@
 
     public class Api
     {
-
         string cnnStr = @"Data Source=localhost\dev;Initial Catalog=test;Connect Timeout=60;Persist Security Info=True;User ID=sa;Password=sqladmin";
 
         public ReactiveProperty<string> InfoMessage { get; private set; } = new ReactiveProperty<string>();
@@ -88,6 +87,12 @@
                 InfoMessage.Value = e.Message;
             }
             return null;
+        }
+
+        public Dictionary<string,string> GetHeader(int id)
+        {
+            if (!SqlDic.ContainsKey(id)) return null;
+            return SqlDic[id].Header;
         }
 
         public List<string> GetParamNames(int id)

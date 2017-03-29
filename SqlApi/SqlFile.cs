@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using SqlApi.SimpleHelpers;
+
     public class SqlFile
     {
         public string FilePath { get; internal set; }
@@ -22,7 +24,7 @@
         {
             FilePath = path;
             FileName = Path.GetFileNameWithoutExtension(path);
-            RawText = File.ReadAllText(path);
+            RawText = File.ReadAllText(path, FileEncoding.DetectFileEncoding(path));
         }
     }
 }

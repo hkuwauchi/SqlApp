@@ -74,7 +74,7 @@ namespace SqlApiService
             app.Map("/swagger", builder =>
             {
                 var xmlName = "SqlApiService.xml";
-                var xmlPath = AppDomain.CurrentDomain.BaseDirectory + @"bin\" + xmlName;
+                var xmlPath = AppDomain.CurrentDomain.BaseDirectory + xmlName;
 
                 builder.UseLightNodeSwagger(new SwaggerOptions("SqlApiService", "/api")
                 {

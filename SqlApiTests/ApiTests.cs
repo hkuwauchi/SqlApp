@@ -90,6 +90,26 @@ Skip:
             }
         }
 
+
+        [TestMethod()]
+        public void GetHeaderTest()
+        {
+            var api = new Api();
+            var header = api.GetHeader(1);
+
+            header.IsNotNull();
+            header["description"].Is("SQLを実行する");
+            header["author"].Is("unknown");
+            header["client"].Is("unknown");
+
+            Console.WriteLine($"description:");
+            Console.WriteLine($"{header["description"]}");
+            Console.WriteLine($"author:");
+            Console.WriteLine($"{header["author"]}");
+            Console.WriteLine($"client:");
+            Console.WriteLine($"{header["client"]}");
+        }
+
         [TestMethod()]
         public void GetParamNamesTest()
         {
