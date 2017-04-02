@@ -1,7 +1,4 @@
 ###
-Get http://localhost:5050/pages/Views/Index
-
-###
 Get http://localhost:5050/api/Sql/List
 
 ###
@@ -17,20 +14,3 @@ id=7&values=1&values=2
 Post http://localhost:5050/api/Sql/ListApi
 
 
-###
-
-POST http://localhost:58573/api/My/Sum
-Content-Type: application/application/x-www-form-urlencoded
-
-x=1&y=2&z=10
-
-###
-
-POST  http://localhost:58573/api/My/Echo
-Content-Type: application/application/x-www-form-urlencoded
-
-x=abc
-
-###
-
-http://localhost:58573/glimpse.axd

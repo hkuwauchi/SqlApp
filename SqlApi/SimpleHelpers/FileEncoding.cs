@@ -349,7 +349,8 @@ namespace SqlApi.SimpleHelpers
 
         private void IncrementFrequency (string charset)
         {
-            encodingFrequency.TryGetValue(charset, out int currentCount);
+            int currentCount;
+            encodingFrequency.TryGetValue (charset, out currentCount);
             encodingFrequency[charset] = ++currentCount;
         }
 
