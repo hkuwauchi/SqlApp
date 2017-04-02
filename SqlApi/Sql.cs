@@ -96,12 +96,12 @@
                     }
                 }
 
-                var headerDic = new Dictionary<string, string>();
-
-                headerDic["description"] = dic["description"].Count == 0 ? "no description" : string.Join(Environment.NewLine, dic["description"]);
-                headerDic["author"] = dic["author"].Count == 0 ? "unknown" : string.Join(Environment.NewLine, dic["author"]);
-                headerDic["client"] = dic["client"].Count == 0 ? "unknown" : string.Join(Environment.NewLine, dic["client"]);
-
+                var headerDic = new Dictionary<string, string>
+                {
+                    ["description"] = dic["description"].Count == 0 ? "no description" : string.Join(Environment.NewLine, dic["description"]),
+                    ["author"] = dic["author"].Count == 0 ? "unknown" : string.Join(Environment.NewLine, dic["author"]),
+                    ["client"] = dic["client"].Count == 0 ? "unknown" : string.Join(Environment.NewLine, dic["client"])
+                };
                 return headerDic;
             }
             catch (Exception e)

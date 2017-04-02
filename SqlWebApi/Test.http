@@ -1,4 +1,15 @@
 ###
+http://localhost:60617/
+
+###
+
+Get http://localhost:60617/api/List/
+
+###
+Get http://localhost:5050/
+
+
+###
 Get http://localhost:5050/api/List/
 
 ###
