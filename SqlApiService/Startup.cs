@@ -66,11 +66,6 @@ namespace SqlApiService
                 builder.UseLightNode(option);
             });
 
-            app.Map("/pages", builder =>
-            {
-                builder.UseLightNode(new LightNodeOptions(AcceptVerbs.Get, new JsonNetContentFormatter()));
-            });
-
             app.Map("/swagger", builder =>
             {
                 var xmlName = "SqlApiService.xml";
