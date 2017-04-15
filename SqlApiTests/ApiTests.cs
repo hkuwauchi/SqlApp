@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
 
     [TestClass()]
@@ -76,7 +77,7 @@ Skip:
         public void SqlFilesTest()
         {
             var api = new Api();
-            api.SqlDic.Count.Is(8);
+            api.SqlDic.Count.Is(9);
             foreach (var c in api.SqlDic.OrderBy(c => c.Key))
             {
                 Console.WriteLine(
@@ -177,9 +178,16 @@ Skip:
             res.Count().Is(2);
             row = res.First();
             row["i"].Is(1);
-
             row = res.Skip(1).First();
             row["i"].Is(2);
+
+            pin = new string[] { "1", "2" };
+            res = api.Query(9, pin);
+            res.IsNotNull();
+            res.Count().Is(2);
+            row = res.First();
+            row["Id"].Is(1);
+
 
             pin = new[] { drop };
             res = api.Query(1, pin);

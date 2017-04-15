@@ -18,7 +18,7 @@ namespace SqlWebApi.Controllers.Tests
         public void GetTest()
         {
             var list = new ListController();
-            list.Get().Count().Is(8);
+            list.Get().Count().Is(9);
         }
 
         [TestMethod()]

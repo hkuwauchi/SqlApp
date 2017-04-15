@@ -89,7 +89,7 @@
             return null;
         }
 
-        public Dictionary<string,string> GetHeader(int id)
+        public Dictionary<string, string> GetHeader(int id)
         {
             if (!SqlDic.ContainsKey(id)) return null;
             return SqlDic[id].Header;
@@ -121,6 +121,31 @@
             var sql = SqlDic[id];
 
             var paramList = GetArgs(id, args);
+            if (id == 9)
+            {
+                var a = args.Select(c => new[] { c });
+                var p = GetArgs(id, a);
+                var names = GetParamNames(id);
+                if (names == null) return null;
+                IDictionary<string,object> r = new ExpandoObject();
+                foreach (var i in names)
+                {
+                    r[i] = p.Select(c => c[i]).ToArray();
+                }
+
+                try
+                {
+                    using (var cnn = new SqlConnection(cnnStr))
+                    {
+                        return cnn.Query(sql.QueryText, r).Select(c => (ExpandoObject)ToExpandoDynamic(c));
+                    }
+                }
+                catch (Exception e)
+                {
+                    InfoMessage.Value = e.Message;
+                }
+                return null;
+            }
 
             try
             {
